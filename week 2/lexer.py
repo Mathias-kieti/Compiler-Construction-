@@ -1,13 +1,14 @@
 import re
 
 TOKEN_SPEC = [
+    ('COMMENT', r'//.*|/\*[\s\S]*?\*/'),
     ('KEYWORD', r'\b(if|else|for|do|while|class|method)\b'),
     ('TYPE', r'\b(int|float|string|array|stack)\b'),
-    ('IDENTIFIER', r'[a-zA-Z_][a-zA-Z0-9_]*'),
     ('NUMBER', r'\b\d+(\.\d+)?\b'),
-    ('STRING', r'"[^"]*"'),
-    ('OPERATOR', r'==|=|\*|/|-|>'),
-    ('SEPARATOR', r'[();{},]'),
+    ('STRING', r'"[^\"]*"'),
+    ('IDENTIFIER', r'[a-zA-Z_][a-zA-Z0-9_]*'),
+    ('OPERATOR', r'==|!=|<=|>=|=|<|>|\+|-|\*|/'),
+    ('SEPARATOR', r'[()\[\]{};,\.]'),
     ('WHITESPACE', r'\s+'),
 ]
 
@@ -18,6 +19,7 @@ def tokenize(code):
     for match in re.finditer(token_regex, code):
         kind = match.lastgroup
         value = match.group()
-        if kind != 'WHITESPACE':
-            tokens.append((kind, value))
+        if kind in ('WHITESPACE', 'COMMENT'):
+            continue
+        tokens.append((kind, value))
     return tokens
